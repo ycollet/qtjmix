@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/images">
+        <file alias="MainIcon">../img/icon.png</file>
+    </qresource>
+    <qresource prefix="/docs">
+        <file alias="main_html_doc">../doc/qtjmix_doc.html</file>
+    </qresource>
+</RCC>

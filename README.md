@@ -1,4 +1,4 @@
-qjtmix
+qtjmix
 ======
 
 A Jack mixer GUI
