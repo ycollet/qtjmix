@@ -1,6 +1,8 @@
-Sauvegarde et chargement des paramètres (nb de bandes de mixage, paramètres, connections).
 Graduation log.
-Filtre 3 bandes par bande de mixage.
-Réglages des fréquences du filtre 3 bandes par clique droit.
-Compilation windows.
+Code refactoring for strip creation.
+Add several type of meter (from meterbridge).
+Add a Lv2 host (from haaren).
+3 bands filter by strip (not necessary is added via lv2host).
+Fine tune of the frequencies of the filter by a right click (like with guitarix).
+Windows compilation.
 Aux / Send.
