@@ -745,3 +745,263 @@ jack_nframes_t Gui_Mixer::get_buffer_size() const
 {
   return buffer_size;
 }
+
+void Gui_Mixer::LoadSettings()
+{
+  QSettings settings("AudioApp", "QtGuiMix");
+  
+  // Write the following file:
+  // [NbStrips]
+  // [mono/stereo] [stripName] [stripID] [coarsemin] [coarsemax] [coarsecurrent] [finemin] [finemax] [finecurrent] [mute] [solo] [pan]
+  // ...
+  
+  Mixer_Strip * tmp_strip = NULL;
+  jack_port_t * tmp_port_out_l = NULL, * tmp_port_in_l = NULL;
+  jack_port_t * tmp_port_out_r = NULL, * tmp_port_in_r = NULL;
+  std::stringstream port_name;
+  QWidget *mixerCentralWidget = this->centralWidget();
+
+  int                  load_nbStrips = 0, result = 0;
+  std::vector<QString> load_stripName;
+  std::vector<int>     load_stripID;
+  std::vector<int>     load_stripType;
+  std::vector<float>   load_coarseMin, load_coarseMax, load_coarseCurrent;
+  std::vector<float>   load_fineMin, load_fineMax, load_fineCurrent;
+  std::vector<bool>    load_mute, load_solo;
+  std::vector<float>   load_pan;
+  bool convert_result = false;
+  
+  // read the number of strips
+  load_nbStrips = settings.value("NbStrips", 0).toInt();
+
+  for(int i=0; i<load_nbStrips; i++)
+    {
+      load_stripType.push_back(settings.value(QString("MixerType/") + QString::number(i)).toInt());
+      load_stripName.push_back(settings.value(QString("StripName/") + QString::number(i)).toString());
+      load_stripID.push_back(settings.value(QString("StripID/") + QString::number(i)).toInt());
+      load_coarseMin.push_back(settings.value(QString("CoarseMin/") + QString::number(i)).toDouble());
+      load_coarseMax.push_back(settings.value(QString("CoarseMax/") + QString::number(i)).toDouble());
+      load_coarseCurrent.push_back(settings.value(QString("CoarseCurrent/") + QString::number(i)).toDouble());
+      load_fineMin.push_back(settings.value(QString("FineMin/") + QString::number(i)).toDouble());
+      load_fineMax.push_back(settings.value(QString("FineMax/") + QString::number(i)).toDouble());
+      load_fineCurrent.push_back(settings.value(QString("FineCurrent/") + QString::number(i)).toDouble());
+      load_mute.push_back(settings.value(QString("Mute/") + QString::number(i)).toBool());
+      load_solo.push_back(settings.value(QString("Solo/") + QString::number(i)).toBool());
+      load_pan.push_back(settings.value(QString("Pan/") + QString::number(i)).toDouble());
+    }
+  
+  // Now, remove all strips and create new ones
+  for(int i=0; i < strips.size(); i++)
+    {
+      // First remove jack ports
+      for(int j=0; j<strips[i]->get_nb_channel(); ++j)
+	{
+#ifdef ENABLE_JACK
+	  result = jack_port_unregister(client, strips[i]->get_input_port(j));
+	  if (result)
+	    std::cerr << qPrintable(tr("QTJMix: problem while unregistering the input port of the mixer strip ")) << i << "." << std::endl;
+	  
+	  result = jack_port_unregister(client, strips[i]->get_output_port(j));
+	  if (result)
+	    std::cerr << qPrintable(tr("QTJMix: problem while unregistering the output port of the mixer strip ")) << i << "." << std::endl;
+#endif
+	  
+	  // Close the Widget
+	  strips[i]->close();
+
+	  // Remove the Widget from the layout
+	  ((QHBoxLayout *)centralWidget()->layout())->removeWidget(tmp_strip);
+
+	  // Delete the Widget
+	  delete strips[i];
+	}
+    }
+
+  strips.resize(0);
+  
+  // Create the new mixer strips
+  for(int i=0; i<load_nbStrips; i++)
+    {
+      qDebug() << "DEBUG: strip type = " << load_stripType[i];
+
+      switch(load_stripType[i])
+	{
+	case Mixer_Strip::mono:
+	  qDebug() << "load settings: add a mono mixer";
+
+	  // Create a Mono Mixer strip
+	  tmp_strip = new Mixer_Strip(mixerCentralWidget, index_mixer_strip, 1);
+	  tmp_strip->set_jack_client(client);
+
+	  // Create output port
+	  port_name.str("");
+	  port_name << "mixer_out_" << load_stripID[i];
+#ifdef ENABLE_JACK
+	  tmp_port_out_l = jack_port_register(client, port_name.str().c_str(),
+					      JACK_DEFAULT_AUDIO_TYPE,
+					      JackPortIsOutput, 0);
+#endif
+
+	  // Create input port
+	  port_name.str("");
+	  port_name << "mixer_in_" << load_stripID[i];
+#ifdef ENABLE_JACK
+	  tmp_port_in_l = jack_port_register(client, port_name.str().c_str(),
+					     JACK_DEFAULT_AUDIO_TYPE,
+					     JackPortIsInput, 0);
+
+	  if ((tmp_port_in_l == NULL) || (tmp_port_out_l == NULL))
+	    {
+	      std::cerr << qPrintable(tr("no more JACK ports available")) << std::endl;
+	      exit(1);
+	    }
+#endif
+	  
+	  strips.push_back(tmp_strip);
+	  
+	  tmp_strip->set_input_port(0,  tmp_port_in_l);
+	  tmp_strip->set_output_port(0, tmp_port_out_l);
+
+	  tmp_strip->set_coarse_min(load_coarseMin[i]);
+	  tmp_strip->set_coarse_max(load_coarseMax[i]);
+	  tmp_strip->set_coarse_current(load_coarseCurrent[i]);
+
+	  tmp_strip->set_fine_min(load_fineMin[i]);
+	  tmp_strip->set_fine_max(load_fineMax[i]);
+	  tmp_strip->set_fine_current(load_fineCurrent[i]);
+
+	  tmp_strip->set_title(load_stripName[i]);
+
+	  tmp_strip->set_mute(load_mute[i]);
+	  tmp_strip->set_solo(load_solo[i]);
+	  tmp_strip->set_pan(load_pan[i]);
+
+	  ((QHBoxLayout *)centralWidget()->layout())->addWidget(tmp_strip);
+	  ((QHBoxLayout *)centralWidget()->layout())->setAlignment(tmp_strip, Qt::AlignLeft);
+	  ((QHBoxLayout *)centralWidget()->layout())->addStretch(0);
+	  break;
+
+	case Mixer_Strip::stereo:
+	  qDebug() << "load settings: add a stereo mixer";
+
+	  // Create a Stereo Mixer strip
+	  tmp_strip = new Mixer_Strip(mixerCentralWidget, index_mixer_strip, 2);
+	  tmp_strip->set_jack_client(client);
+
+	  // Create left output port
+	  port_name.str("");
+	  port_name << "mixer_" << load_stripID[i] << "_l_out";
+#ifdef ENABLE_JACK
+	  tmp_port_out_l = jack_port_register(client, port_name.str().c_str(),
+					      JACK_DEFAULT_AUDIO_TYPE,
+					      JackPortIsOutput, 0);
+#endif
+	  
+	  // Create left input port
+	  port_name.str("");
+	  port_name << "mixer_" << load_stripID[i] << "_l_in";
+#ifdef ENABLE_JACK
+	  tmp_port_in_l = jack_port_register(client, port_name.str().c_str(),
+					     JACK_DEFAULT_AUDIO_TYPE,
+					     JackPortIsInput, 0);
+	  
+	  if ((tmp_port_in_l == NULL) || (tmp_port_out_l == NULL))
+	    {
+	      std::cerr << qPrintable(tr("no more JACK ports available")) << std::endl;
+	      exit(1);
+	    }
+#endif
+	  
+	  // Create right output port
+	  port_name.str("");
+	  port_name << "mixer_" << load_stripID[i] << "_r_out";
+#ifdef ENABLE_JACK
+	  tmp_port_out_r = jack_port_register(client, port_name.str().c_str(),
+					      JACK_DEFAULT_AUDIO_TYPE,
+					      JackPortIsOutput, 0);
+#endif
+	  
+	  // Create right input port
+	  port_name.str("");
+	  port_name << "mixer_" << load_stripID[i] << "_r_in";
+#ifdef ENABLE_JACK
+	  tmp_port_in_r = jack_port_register(client, port_name.str().c_str(),
+					     JACK_DEFAULT_AUDIO_TYPE,
+					     JackPortIsInput, 0);
+	  
+	  if ((tmp_port_in_r == NULL) || (tmp_port_out_r == NULL))
+	    {
+	      std::cerr << qPrintable(tr("no more JACK ports available")) << std::endl;
+	      exit(1);
+	    }
+#endif
+	  
+	  strips.push_back(tmp_strip);
+	  
+	  tmp_strip->set_input_port(0,  tmp_port_in_l);
+	  tmp_strip->set_output_port(0, tmp_port_out_l);
+	  tmp_strip->set_input_port(1,  tmp_port_in_r);
+	  tmp_strip->set_output_port(1, tmp_port_out_r);
+	  
+	  tmp_strip->set_coarse_min(load_coarseMin[i]);
+	  tmp_strip->set_coarse_max(load_coarseMax[i]);
+	  tmp_strip->set_coarse_current(load_coarseCurrent[i]);
+
+	  tmp_strip->set_fine_min(load_fineMin[i]);
+	  tmp_strip->set_fine_max(load_fineMax[i]);
+	  tmp_strip->set_fine_current(load_fineCurrent[i]);
+
+	  tmp_strip->set_title(load_stripName[i]);
+
+	  tmp_strip->set_mute(load_mute[i]);
+	  tmp_strip->set_solo(load_solo[i]);
+	  tmp_strip->set_pan(load_pan[i]);
+
+	  ((QHBoxLayout *)centralWidget()->layout())->addWidget(tmp_strip);
+	  ((QHBoxLayout *)centralWidget()->layout())->setAlignment(tmp_strip, Qt::AlignLeft);
+	  ((QHBoxLayout *)centralWidget()->layout())->addStretch(0);
+	  break;
+	}
+    }
+  
+  this->adjustSize();
+
+  // Search for the maximum strip id
+  index_mixer_strip = -1;
+  for(int i=0; i<load_nbStrips; i++)
+    index_mixer_strip = std::max(load_stripID[i],index_mixer_strip);
+  index_mixer_strip++;
+}
+
+void Gui_Mixer::SaveSettings()
+{
+  QSettings settings("AudioApp", "QtGuiMix");
+  
+  // Write the following file:
+  // [NbStrips]
+  // [mono/stereo] [stripName] [stripID] [coarsemin] [coarsemax] [coarsecurrent] [finemin] [finemax] [finecurrent] [mute] [solo] [pan]
+  // ...
+  
+  settings.setValue("NbStrips", (int)strips.size());
+  for(int i=0; i<strips.size(); i++)
+    {
+      settings.setValue(QString("MixerType/")     + QString::number(i), strips[i]->get_mixer_type());
+      settings.setValue(QString("StripName/")     + QString::number(i), strips[i]->get_title().replace(' ','_'));
+      settings.setValue(QString("StripID/")       + QString::number(i), strips[i]->get_strip_id());
+      settings.setValue(QString("CoarseMin/")     + QString::number(i), (double)strips[i]->get_coarse_min());
+      settings.setValue(QString("CoarseMax/")     + QString::number(i), (double)strips[i]->get_coarse_max());
+      settings.setValue(QString("CoarseCurrent/") + QString::number(i), (double)strips[i]->get_coarse_current());
+      settings.setValue(QString("FineMin/")       + QString::number(i), (double)strips[i]->get_fine_min());
+      settings.setValue(QString("FineMax/")       + QString::number(i), (double)strips[i]->get_fine_max());
+      settings.setValue(QString("FineCurrent/")   + QString::number(i), (double)strips[i]->get_fine_current());
+      settings.setValue(QString("Mute/")          + QString::number(i), strips[i]->get_mute());
+      settings.setValue(QString("Solo/")          + QString::number(i), strips[i]->get_solo());
+      settings.setValue(QString("Pan/")           + QString::number(i), (double)strips[i]->get_pan());
+    }
+}
+
+void Gui_Mixer::closeEvent(QCloseEvent *event)
+{
+  SaveSettings();
+  event->accept();
+}

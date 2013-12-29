@@ -196,8 +196,12 @@ int main(int argc, char * argv[])
   mainMixer->set_jack_client(client);
   
   if (argc==2) mainMixer->load_config_file(argv[1]);
-  else         mainMixer->init_2_strips();
-
+  else         
+    {
+      mainMixer->init_2_strips();
+      mainMixer->LoadSettings();
+    }
+  
   mainMixer->show();
 
   mainMixer->set_sample_rate(jack_get_sample_rate(client));

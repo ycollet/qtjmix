@@ -50,6 +50,14 @@ class Gui_Mixer : public QMainWindow
   void  open_File();
   void  save_File();
   int   about_dialog();
+  
+ protected:
+  void closeEvent(QCloseEvent *event);
+ 
+ public:
+  void LoadSettings();
+  void SaveSettings();
+  
  private:
   std::vector<Mixer_Strip *> strips;
   QMenu         *fileMenu;
