@@ -59,7 +59,7 @@ int qtjmix_process(jack_nframes_t nframes, void *arg)
       if ((*ptrMixerStrip)[i]->get_mixer_type()==Mixer_Strip::stereo)
 	{
 	  pan[0] = ((*ptrMixerStrip)[i]->get_pan() + 50.0) / 100.0;
-	  pan[1] = 1.0 - pan[0];
+	  pan[1] = sqrt(1.0 - pan[0]*pan[0]);
 	}
 
       for(j = 0; j<(*ptrMixerStrip)[i]->get_nb_channel(); j++)
