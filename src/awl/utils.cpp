@@ -18,34 +18,52 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
 
-#include <QString>
-
 #include "utils.h"
 
-static const char *vall[] = {
-  "c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"
-};
+static const char* vall[] = {
+      QT_TRANSLATE_NOOP("awlutils", "c"),
+      QT_TRANSLATE_NOOP("awlutils", "c#"),
+      QT_TRANSLATE_NOOP("awlutils", "d"),
+      QT_TRANSLATE_NOOP("awlutils", "d#"),
+      QT_TRANSLATE_NOOP("awlutils", "e"),
+      QT_TRANSLATE_NOOP("awlutils", "f"),
+      QT_TRANSLATE_NOOP("awlutils", "f#"),
+      QT_TRANSLATE_NOOP("awlutils", "g"),
+      QT_TRANSLATE_NOOP("awlutils", "g#"),
+      QT_TRANSLATE_NOOP("awlutils", "a"),
+      QT_TRANSLATE_NOOP("awlutils", "a#"),
+      QT_TRANSLATE_NOOP("awlutils", "b")
+      };
+static const char* valu[] = {
+      QT_TRANSLATE_NOOP("awlutils", "C"),
+      QT_TRANSLATE_NOOP("awlutils", "C#"),
+      QT_TRANSLATE_NOOP("awlutils", "D"),
+      QT_TRANSLATE_NOOP("awlutils", "D#"),
+      QT_TRANSLATE_NOOP("awlutils", "E"),
+      QT_TRANSLATE_NOOP("awlutils", "F"),
+      QT_TRANSLATE_NOOP("awlutils", "F#"),
+      QT_TRANSLATE_NOOP("awlutils", "G"),
+      QT_TRANSLATE_NOOP("awlutils", "G#"),
+      QT_TRANSLATE_NOOP("awlutils", "A"),
+      QT_TRANSLATE_NOOP("awlutils", "A#"),
+      QT_TRANSLATE_NOOP("awlutils", "B")
+      };
 
-static const char *valu[] = {
-  "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
-};
-
-namespace Awl
-{
+namespace Awl {
 
 //---------------------------------------------------------
 //   pitch2string
 //---------------------------------------------------------
 
-  QString pitch2string (int v)
-  {
-    if (v < 0 || v > 127)
-      return QString ("----");
-    int octave = (v / 12) - 2;
-    QString o;
-      o.sprintf ("%d", octave);
-    int i = v % 12;
-    QString s (octave < 0 ? valu[i] : vall[i]);
-      return s + o;
-  }
+QString pitch2string(int v)
+      {
+      if (v < 0 || v > 127)
+            return QString("----");
+      int octave = (v / 12) - 2;
+      QString o;
+      o.sprintf("%d", octave);
+      int i = v % 12;
+      return qApp->translate("awlutils", octave < 0 ? valu[i] : vall[i]) + o;
+      }
 }
+

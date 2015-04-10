@@ -20,7 +20,7 @@
 
 #include "set_mixer_param_dialog.h"
 
-#include <QtGui>
+#include <QtWidgets>
 
 #include <jack/jack.h>
 

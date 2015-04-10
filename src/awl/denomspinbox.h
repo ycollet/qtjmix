@@ -21,25 +21,25 @@
 #ifndef __AWLDENOMSPINBOX_H__
 #define __AWLDENOMSPINBOX_H__
 
-#include <QSpinBox>
+#include <QtWidgets>
 
-namespace Awl
-{
+namespace Awl {
 
 //---------------------------------------------------------
 //   DenominatorSpinBox
 //---------------------------------------------------------
 
-  class DenominatorSpinBox:public QSpinBox
-  {
-    Q_OBJECT
-      virtual QValidator::State validate (QString & input, int &pos) const;
-    virtual void fixup (QString & input) const;
+class DenominatorSpinBox : public QSpinBox {
+      Q_OBJECT
 
-  public:
-      virtual void stepBy (int steps);
-      DenominatorSpinBox (QWidget * parent = 0);
-  };
+      virtual QValidator::State validate(QString& input, int& pos) const;
+      virtual void fixup(QString& input) const;
+
+   public:
+      virtual void stepBy(int steps);
+      DenominatorSpinBox(QWidget* parent = 0);
+      };
 }
 
 #endif
+

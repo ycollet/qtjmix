@@ -20,18 +20,19 @@
 
 #include "panknob.h"
 
-namespace Awl
-{
+namespace Awl {
 
 //---------------------------------------------------------
 //   PanKnob
 //---------------------------------------------------------
 
-  PanKnob::PanKnob (QWidget * parent):Knob (parent)
-  {
-    setCenter (true);
-    setRange (-1.0f, 1.0f);
-    setLineStep (0.01f);
-    setPageStep (0.1f);
-  }
+PanKnob::PanKnob(QWidget* parent)
+   : Knob(parent)
+      {
+      setCenter(true);
+      setRange(-1.0f, 1.0f);
+      setLineStep(0.01f);
+      setPageStep(0.1f);
+      }
 }
+

@@ -19,7 +19,7 @@
 //=============================================================================
 
 #include <QtGui>
-#include <QtWebKit/QWebView>
+#include <QtWebKitWidgets>
 
 #include <sstream>
 #include <iostream>
@@ -46,7 +46,7 @@
 // A New style to force the help menu to be written on the right
 // Force the drawing of Separator.
 
-class MixerStyle : public QWindowsStyle
+class MixerStyle : public QCommonStyle
 {
 public:
   MixerStyle() {}
@@ -55,7 +55,7 @@ public:
   {
     if (hint == QStyle::SH_DrawMenuBarSeparator) return 1;
 
-    return QWindowsStyle::styleHint(hint, option, widget, returnData);
+    return QCommonStyle::styleHint(hint, option, widget, returnData);
   }
 };
 

@@ -18,11 +18,14 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
 
+#include <QtWidgets>
+/*
 #include <QApplication>
 #include <QPlastiqueStyle>
 #include <QTranslator>
 #include <QLocale>
 #include <QLibraryInfo>
+*/
 #include <QDebug>
 
 #include <iostream>
@@ -174,7 +177,8 @@ int main(int argc, char * argv[])
 #endif
 
   QApplication app(argc, argv);
-  
+  app.setStyle("fusion");
+
   QTranslator qtTranslator;
   qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
   app.installTranslator(&qtTranslator);
@@ -188,8 +192,6 @@ int main(int argc, char * argv[])
     {
       std::cerr << QT_TRANSLATE_NOOP("main","failed to load translation file ") << "qtjmix" << qPrintable(QLocale::system().name().toLower()) << "." << std::endl;
     }
-
-  QApplication::setStyle(new  QPlastiqueStyle); // set plastique style
 
   Gui_Mixer * mainMixer = new Gui_Mixer(NULL);
 

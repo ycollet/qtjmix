@@ -20,6 +20,7 @@
 
 #include <QtGui>
 #include <QDebug>
+#include <QVBoxLayout>
 
 #include <iostream>
 #include <sstream>

@@ -23,7 +23,7 @@
 #ifndef __AWLCHECKBOX_H__
 #define __AWLCHECKBOX_H__
 
-#include <QCheckBox>
+#include <QtWidgets>
 
 namespace Awl
 {

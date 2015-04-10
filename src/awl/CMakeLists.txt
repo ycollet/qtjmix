@@ -18,15 +18,10 @@
 #  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #=============================================================================
 
-cmake_minimum_required(VERSION 2.6)
 
 option(AWL_BUILD_PLUGIN "Build the designer plugin for AWL" OFF)
 
-find_package(Qt 4.8 REQUIRED)
-
-include(${QT_USE_FILE})
-
-qt4_wrap_cpp(mocs aslider.h
+qt5_wrap_cpp(mocs aslider.h
                   knob.h
 		  panknob.h
 		  checkbox.h
@@ -63,8 +58,10 @@ add_library(awl STATIC ${mocs}
 		       utils.cpp
 		       denomspinbox.cpp)
 
+qt5_use_modules(awl Widgets)
+
 if (NOT MINGW AND NOT APPLE AND AWL_BUILD_PLUGIN)
-  qt4_wrap_cpp(mocs2 aslider.h
+  qt5_wrap_cpp(mocs2 aslider.h
                      knob.h
 		     panknob.h
    		     checkbox.h
@@ -98,7 +95,9 @@ if (NOT MINGW AND NOT APPLE AND AWL_BUILD_PLUGIN)
 			       utils.cpp)
 			     
   set_target_properties(awlplugin PROPERTIES COMPILE_FLAGS "-fPIC -D_GNU_SOURCE -D_REENTRANT -DHAVE_CONFIG_H -DQT_PLUGIN -DQT_SHARED -DQT_NO_DEBUG")
-  
+
+  qt5_use_modules(awlplugin Widgets)
+ 
   install(TARGETS awlplugin 
           DESTINATION ${QT_PLUGINS_DIR}/designer/)
 endif (NOT MINGW AND NOT APPLE AND AWL_BUILD_PLUGIN)

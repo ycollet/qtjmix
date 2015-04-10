@@ -18,73 +18,67 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
 
-#include <QtGui>
-
 #include "pitchedit.h"
 #include "utils.h"
 
-namespace Awl
-{
+namespace Awl {
 
 //---------------------------------------------------------
 //   PitchEdit
 //---------------------------------------------------------
 
-  PitchEdit::PitchEdit (QWidget * parent):QSpinBox (parent)
-  {
-    setRange (0, 127);
-    deltaMode = false;
-  }
+PitchEdit::PitchEdit(QWidget* parent)
+  : QSpinBox(parent)
+      {
+      setRange(0, 127);
+      deltaMode = false;
+      }
 
 //---------------------------------------------------------
 //   keyPressEvent
 //---------------------------------------------------------
 
-  void PitchEdit::keyPressEvent (QKeyEvent * ev)
-  {
-    if (ev->key () == Qt::Key_Return)
+void PitchEdit::keyPressEvent(QKeyEvent* ev)
       {
-	emit returnPressed ();
+      if (ev->key() == Qt::Key_Return)
+            emit returnPressed();
+      else if (ev->key() == Qt::Key_Escape)
+            emit escapePressed();
       }
-    else
-      {
-	if (ev->key () == Qt::Key_Escape)
-	  emit escapePressed ();
-      }
-  }
 
 //---------------------------------------------------------
 //   textFromValue
 //---------------------------------------------------------
 
-  QString PitchEdit::textFromValue (int v) const
-  {
-    if (deltaMode)
-      return QString ("%1").arg (v);
-    else
-      return pitch2string (v);
-  }
+QString PitchEdit::textFromValue(int v) const
+      {
+      if (deltaMode)
+            return QString("%1").arg(v);
+      else
+            return pitch2string(v);
+      }
 
 //---------------------------------------------------------
 //   valueFromText
 //---------------------------------------------------------
 
-  int PitchEdit::valueFromText (const QString & s) const
-  {
-    printf ("AwlPitchEdit::valueFromText(%s): not impl.\n", qPrintable (s));
-    return 0;
-  }
+int PitchEdit::valueFromText(const QString& s) const
+      {
+      qDebug("AwlPitchEdit::valueFromText(%s): not impl.", qPrintable(s));
+      return 0;
+      }
 
 //---------------------------------------------------------
 //   setDeltaMode
 //---------------------------------------------------------
 
-  void PitchEdit::setDeltaMode (bool val)
-  {
-    deltaMode = val;
-    if (deltaMode)
-      setRange (-127, 127);
-    else
-      setRange (0, 127);
-  }
+void PitchEdit::setDeltaMode(bool val)
+      {
+      deltaMode = val;
+      if (deltaMode)
+            setRange(-127, 127);
+      else
+            setRange(0, 127);
+      }
 }
+

@@ -33,10 +33,12 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 set(QT_USE_QTWEBKIT TRUE)
 
-find_package(Qt4 REQUIRED)
+find_package(Qt5 COMPONENTS Widgets WebKitWidgets LinguistTools)
 find_package(Jack REQUIRED)
 
-include(${QT_USE_FILE})
+include_directories(${Qt5Widgets_INCLUDES})
+include_directories(${Qt5WebKitWidgets_INCLUDES})
+
 include_directories("${CMAKE_SOURCE_DIR}/src"
                     "${CMAKE_SOURCE_DIR}/src/widgets"
                     "${CMAKE_BINARY_DIR}")

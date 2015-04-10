@@ -21,7 +21,7 @@
 #ifndef HELP_DIALOG_H
 #define HELP_DIALOG_H
 
-#include <QtGui>
+#include <QtWidgets>
 
 class HelpDialog : public QDialog
 {

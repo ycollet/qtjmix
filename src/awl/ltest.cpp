@@ -24,10 +24,10 @@
 //   main
 //---------------------------------------------------------
 
-int
-main (int /*argc */ , char * /*argv */ [])
-{
-  printf ("Hello MusE\n");
-  new KnobPlugin;
-  return 0;
-}
+int main(int /*argc*/, char* /*argv*/[])
+      {
+      printf("Hello MusE\n");
+      new KnobPlugin;
+      return 0;
+      }
+

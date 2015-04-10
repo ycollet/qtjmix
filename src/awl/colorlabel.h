@@ -21,41 +21,37 @@
 #ifndef __AWLCOLORLABEL_H__
 #define __AWLCOLORLABEL_H__
 
-#include <QFrame>
+#include <QtWidgets>
 
-namespace Awl
-{
+namespace Awl {
 
 //---------------------------------------------------------
 //   ColorLabel
 //---------------------------------------------------------
 
-  class ColorLabel:public QFrame
-  {
-    Q_OBJECT
-      Q_PROPERTY (QColor color READ color WRITE setColor) QColor _color;
-    QPixmap *_pixmap;
+class ColorLabel : public QFrame {
+      Q_OBJECT
+      Q_PROPERTY(QColor color READ color WRITE setColor)
 
-    virtual void paintEvent (QPaintEvent *);
-    virtual void mousePressEvent (QMouseEvent *);
+      QColor _color;
+      QPixmap* _pixmap;
 
-      signals:void colorChanged (QColor);
+      virtual void paintEvent(QPaintEvent*);
+      virtual void mousePressEvent(QMouseEvent*);
 
-  public:
-      ColorLabel (QWidget * parent = 0);
-     ~ColorLabel ();
-    void setColor (const QColor & c);
-    virtual QSize sizeHint () const;
-    void setPixmap (QPixmap *);
-    QColor color () const
-    {
-      return _color;
-    }
-    QPixmap *pixmap () const
-    {
-      return _pixmap;
-    }
-  };
+   signals:
+      void colorChanged(QColor);
 
-}				// namespace Awl
+   public:
+      ColorLabel(QWidget* parent = 0);
+      ~ColorLabel();
+      void setColor(const QColor& c);
+      virtual QSize sizeHint() const;
+      void setPixmap(QPixmap*);
+      QColor color() const     { return _color; }
+      QPixmap* pixmap() const  { return _pixmap;  }
+      };
+
+}  // namespace Awl
 #endif
+

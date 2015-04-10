@@ -21,9 +21,11 @@
 #ifndef __AWLUTILS_H__
 #define __AWLUTILS_H__
 
-namespace Awl
-{
-  extern QString pitch2string (int);
-}
+#include <QtCore>
+
+namespace Awl {
+      extern QString pitch2string(int);
+      }
 
 #endif
+

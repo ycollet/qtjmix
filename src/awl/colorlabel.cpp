@@ -18,96 +18,94 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
 
-#include <QtGui>
-
 #include "colorlabel.h"
 
-namespace Awl
-{
+namespace Awl {
 
 //---------------------------------------------------------
 //   ColorLabel
 //---------------------------------------------------------
 
-  ColorLabel::ColorLabel (QWidget * parent):QFrame (parent)
-  {
-    _color = Qt::blue;
-    _pixmap = 0;
-  }
+ColorLabel::ColorLabel(QWidget* parent)
+   : QFrame (parent)
+      {
+      _color  = Qt::blue;
+      _pixmap = 0;
+      }
 
-  ColorLabel::~ColorLabel ()
-  {
-    delete _pixmap;
-  }
+ColorLabel::~ColorLabel()
+      {
+      delete _pixmap;
+      }
 
 //---------------------------------------------------------
 //   setColor
 //---------------------------------------------------------
 
-  void ColorLabel::setColor (const QColor & c)
-  {
-    _color = c;
-    update ();
-  }
+void ColorLabel::setColor(const QColor& c)
+      {
+      _color = c;
+      update();
+      }
 
 //---------------------------------------------------------
 //   setPixmap
 //---------------------------------------------------------
 
-  void ColorLabel::setPixmap (QPixmap * pm)
-  {
-    delete _pixmap;
-    _pixmap = pm;
-    update ();
-  }
+void ColorLabel::setPixmap(QPixmap* pm)
+      {
+      delete _pixmap;
+      _pixmap = pm;
+      update();
+      }
 
 //---------------------------------------------------------
 //   sizeHint
 //---------------------------------------------------------
 
-  QSize ColorLabel::sizeHint () const
-  {
-    return QSize (30, 20);
-  }
+QSize ColorLabel::sizeHint() const
+      {
+      return QSize(30, 20);
+      }
 
 //---------------------------------------------------------
 //   paintEvent
 //---------------------------------------------------------
 
-  void ColorLabel::paintEvent (QPaintEvent * ev)
-  {
-    {
-      QPainter p (this);
-      int fw = frameWidth ();
-      QRect r (frameRect ().adjusted (fw, fw, -2 * fw, -2 * fw));
+void ColorLabel::paintEvent(QPaintEvent* ev)
+      {
+      {
+      QPainter p(this);
+      int fw = frameWidth();
+      QRect r(frameRect().adjusted(fw, fw, -2*fw, -2*fw));
       if (_pixmap)
-	p.drawTiledPixmap (r, *_pixmap);
+            p.drawTiledPixmap(r, *_pixmap);
       else
-	p.fillRect (r, _color);
-    }
-    QFrame::paintEvent (ev);
-  }
+            p.fillRect(r, _color);
+      }
+      QFrame::paintEvent(ev);
+      }
 
 //---------------------------------------------------------
 //   mousePressEvent
 //---------------------------------------------------------
 
-  void ColorLabel::mousePressEvent (QMouseEvent *)
-  {
-    if (_pixmap)
-      return;
-    QColor c = QColorDialog::getColor (_color, this,
-				       tr ("MuseScore: Select Color"),
-				       QColorDialog::ShowAlphaChannel);
-    if (c.isValid ())
+void ColorLabel::mousePressEvent(QMouseEvent*)
       {
-	if (_color != c)
-	  {
-	    _color = c;
-	    emit colorChanged (_color);
-	    update ();
-	  }
+      if (_pixmap)
+            return;
+      QColor c = QColorDialog::getColor(_color, this,
+         tr("MuseScore: Select Color"),
+         QColorDialog::ShowAlphaChannel
+         );
+      if (c.isValid()) {
+            if (_color != c) {
+                  _color = c;
+                  emit colorChanged(_color);
+                  update();
+                  }
+            }
       }
-  }
 
-}				// namespace Awl
+} // namespace Awl
+

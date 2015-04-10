@@ -18,43 +18,41 @@
 //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //=============================================================================
 
-#include <QtGui>
-
 #include "fastlog.h"
 #include "aslider.h"
 
-namespace Awl
-{
+namespace Awl {
 
 //---------------------------------------------------------
 //   AbstractSlider
 //---------------------------------------------------------
 
-  AbstractSlider::AbstractSlider (QWidget * parent):QWidget (parent),
-    _scaleColor (Qt::darkGray), _scaleValueColor (Qt::blue)
-  {
-    _id = 0;
-    _value = 0.5;
-    _minValue = 0.0;
-    _maxValue = 1.0;
-    _lineStep = 0.1;
-    _pageStep = 0.2;
-    _center = false;
-    _invert = false;
-    _scaleWidth = 4;
-    _log = false;
-    setFocusPolicy (Qt::StrongFocus);
-  }
+AbstractSlider::AbstractSlider(QWidget* parent)
+   : QWidget(parent), _scaleColor(Qt::darkGray), _scaleValueColor(QColor("#2456aa"))
+      {
+      _id         = 0;
+      _value      = 0.5;
+      _minValue   = 0.0;
+      _maxValue   = 1.0;
+      _lineStep   = 0.1;
+      _pageStep   = 0.2;
+      _center     = false;
+      _invert     = false;
+      _scaleWidth = 4;
+      _log        = false;
+      _useActualValue = false;
+      setFocusPolicy(Qt::StrongFocus);
+      }
 
 //---------------------------------------------------------
 //   setEnabled
 //---------------------------------------------------------
 
-  void AbstractSlider::setEnabled (bool val)
-  {
-    QWidget::setEnabled (val);
-    update ();
-  }
+void AbstractSlider::setEnabled(bool val)
+      {
+      QWidget::setEnabled(val);
+      update();
+      }
 
 //---------------------------------------------------------
 //   setCenter
@@ -62,152 +60,163 @@ namespace Awl
 //!   show the center position.
 //---------------------------------------------------------
 
-  void AbstractSlider::setCenter (bool val)
-  {
-    if (val != _center)
+void AbstractSlider::setCenter(bool val)
       {
-	_center = val;
-	update ();
+      if (val != _center) {
+            _center = val;
+            update();
+            }
       }
-  }
 
 //!--------------------------------------------------------
 //   setScaleWidth
 //---------------------------------------------------------
 
-  void AbstractSlider::setScaleWidth (int val)
-  {
-    if (val != _scaleWidth)
+void AbstractSlider::setScaleWidth(int val)
       {
-	_scaleWidth = val;
-	update ();
+      if (val != _scaleWidth) {
+            _scaleWidth = val;
+            update();
+            }
       }
-  }
 
 //---------------------------------------------------------
 //   setScaleColor
 //---------------------------------------------------------
 
-  void AbstractSlider::setScaleColor (const QColor & c)
-  {
-    if (c != _scaleColor)
+void AbstractSlider::setScaleColor(const QColor& c)
       {
-	_scaleColor = c;
-	update ();
+      if (c != _scaleColor) {
+            _scaleColor = c;
+            update();
+            }
       }
-  }
 
 //---------------------------------------------------------
 //   setScaleValueColor
 //---------------------------------------------------------
 
-  void AbstractSlider::setScaleValueColor (const QColor & c)
-  {
-    if (c != _scaleValueColor)
+void AbstractSlider::setScaleValueColor(const QColor& c)
       {
-	_scaleValueColor = c;
-	update ();
+      if (c != _scaleValueColor) {
+            _scaleValueColor = c;
+            update();
+            }
       }
-  }
 
 //---------------------------------------------------------
 //   wheelEvent
 //---------------------------------------------------------
 
-  void AbstractSlider::wheelEvent (QWheelEvent * ev)
-  {
-    int div = 50;
-    if (ev->modifiers () & Qt::ShiftModifier)
-      div = 15;
-    _value += (ev->delta () * lineStep ()) / div;
-    if (_value < _minValue)
-      _value = _minValue;
-    else if (_value > _maxValue)
-      _value = _maxValue;
-    valueChange ();
-  }
+void AbstractSlider::wheelEvent(QWheelEvent* ev)
+      {
+      int div = 50;
+      if (ev->modifiers() & Qt::ShiftModifier)
+            div = 15;
+      _value += (ev->delta() * lineStep()) / div;
+      if (_value < _minValue)
+            _value = _minValue;
+      else if (_value > _maxValue)
+            _value = _maxValue;
+      valueChange();
+      }
 
 //---------------------------------------------------------
 //   keyPressEvent
 //---------------------------------------------------------
 
-  void AbstractSlider::keyPressEvent (QKeyEvent * ev)
-  {
-    double oval = _value;
-
-    switch (ev->key ())
+void AbstractSlider::keyPressEvent(QKeyEvent* ev)
       {
-      case Qt::Key_Home:
-	_value = _minValue;
-	break;
-      case Qt::Key_End:
-	_value = _maxValue;
-	break;
-      case Qt::Key_Up:
-      case Qt::Key_Left:
-	_value += lineStep ();
-	break;
-      case Qt::Key_Down:
-      case Qt::Key_Right:
-	_value -= lineStep ();
-	break;
-      case Qt::Key_PageDown:
-	_value -= pageStep ();
-	break;
-      case Qt::Key_PageUp:
-	_value += pageStep ();
-	break;
-      default:
-	break;
+      double oval = _value;
+
+      switch (ev->key()) {
+            case Qt::Key_Home:      _value = _minValue; break;
+            case Qt::Key_End:       _value = _maxValue; break;
+            case Qt::Key_Up:
+            case Qt::Key_Left:      _value += lineStep(); break;
+            case Qt::Key_Down:
+            case Qt::Key_Right:     _value -= lineStep(); break;
+            case Qt::Key_PageDown:  _value -= pageStep(); break;
+            case Qt::Key_PageUp:    _value += pageStep(); break;
+            case Qt::Key_Delete:
+            case Qt::Key_Backspace: _value = ev->modifiers() & Qt::ShiftModifier ? dclickValue2() : dclickValue1(); break;
+            default:
+                  break;
+            }
+      if (_value < _minValue)
+            _value = _minValue;
+      else if (_value > _maxValue)
+            _value = _maxValue;
+      if (oval != _value)
+            valueChange();
       }
-    if (_value < _minValue)
-      _value = _minValue;
-    else if (_value > _maxValue)
-      _value = _maxValue;
-    if (oval != _value)
-      valueChange ();
-  }
+
+//---------------------------------------------------------
+//   mouseDoubleClickEvent
+//---------------------------------------------------------
+
+void AbstractSlider::mouseDoubleClickEvent(QMouseEvent* ev)
+      {
+      if (ev->button() == Qt::RightButton)
+            _value = _dclickValue2;
+      else
+            _value = _dclickValue1;
+      valueChange();
+      }
 
 //---------------------------------------------------------
 //   setValue
 //---------------------------------------------------------
 
-  void AbstractSlider::setValue (double val)
-  {
-    if (_log)
+void AbstractSlider::setValue(double val)
       {
-	if (val == 0.0f)
-	  _value = _minValue;
-	else
-	  {
-	    _value = fast_log10 (val) * 20.0f;
-	    if (_value < _minValue)
-	      _value = _minValue;
-	  }
+      if (_log) {
+            if (val == 0.0f)
+                  _value = _minValue;
+            else {
+                  _value = fast_log10(val) * 20.0f;
+                  if (_value < _minValue)
+                        _value = _minValue;
+                  }
+            }
+      else
+            _value = val;
+      update();
       }
-    else
-      _value = val;
-    update ();
-  }
 
 //---------------------------------------------------------
 //   valueChange
 //---------------------------------------------------------
 
-  void AbstractSlider::valueChange ()
-  {
-    emit valueChanged (value (), _id);
-    update ();
-  }
+void AbstractSlider::valueChange()
+      {
+      emit valueChanged(value(), _id);
+      update();
+      }
 
 //---------------------------------------------------------
 //   value
 //---------------------------------------------------------
 
-  double AbstractSlider::value () const
-  {
-    return _log ? pow (10.0, _value * 0.05f) : _value;
-  }
+double AbstractSlider::value() const
+      {
+      return _log ? pow(10.0, _value*0.05f) : _value;
+      }
+
+//---------------------------------------------------------
+//   userValue (between 0 and 100)
+//---------------------------------------------------------
+
+QString AbstractSlider::userValue() const
+      {
+      double result;
+      if (_useActualValue)
+            result = value();
+      else
+            result = (_value - minValue())/ ((maxValue() - minValue())/100);
+
+      return QString::number(result, 'f', 2);
+      }
 
 //---------------------------------------------------------
 //   minLogValue
@@ -221,18 +230,17 @@ namespace Awl
 //   setMinLogValue
 //---------------------------------------------------------
 
-  void AbstractSlider::setMinLogValue (double val)
-  {
-    if (_log)
+void AbstractSlider::setMinLogValue(double val)
       {
-	if (val == 0.0f)
-	  _minValue = -100;
-	else
-	  _minValue = fast_log10 (val) * 20.0f;
+      if (_log) {
+            if (val == 0.0f)
+                  _minValue = -100;
+            else
+                  _minValue = fast_log10(val) * 20.0f;
+            }
+      else
+            _minValue = val;
       }
-    else
-      _minValue = val;
-  }
 
 //---------------------------------------------------------
 //   maxLogValue
@@ -246,28 +254,71 @@ namespace Awl
 //   setMaxLogValue
 //---------------------------------------------------------
 
-  void AbstractSlider::setMaxLogValue (double val)
-  {
-    if (_log)
+void AbstractSlider::setMaxLogValue(double val)
       {
-	_maxValue = fast_log10 (val) * 20.0f;
+      if (_log) {
+            _maxValue = fast_log10(val) * 20.0f;
+            }
+      else
+            _maxValue = val;
       }
-    else
-      _maxValue = val;
-  }
 
 #if 0
 //---------------------------------------------------------
 //   init
 //---------------------------------------------------------
 
-  void AbstractSlider::init (const SyntiParameter & f)
-  {
-    _minValue = f.min ();
-    _maxValue = f.max ();
-    _value = f.fval ();
-    _lineStep = (_maxValue - _minValue) * 0.1;
-    _pageStep = _lineStep * 2.0;
-  }
+void AbstractSlider::init(const SyntiParameter& f)
+      {
+      _minValue = f.min();
+      _maxValue = f.max();
+      _value    = f.fval();
+      _lineStep   = (_maxValue - _minValue) * 0.1;
+      _pageStep   = _lineStep * 2.0;
+      }
 #endif
+
+AccessibleAbstractSlider::AccessibleAbstractSlider(AbstractSlider* s) : QAccessibleWidget(s)
+      {
+      slider = s;
+      }
+
+QAccessible::Role AccessibleAbstractSlider::role() const
+      {
+      return QAccessible::Slider;
+      }
+
+QString AccessibleAbstractSlider::text(QAccessible::Text t) const
+      {
+      switch (t) {
+            case QAccessible::Name:
+                  return slider->accessibleName();
+            case QAccessible::Value:
+                  return slider->userValue();
+            case QAccessible::Description:
+                  return slider->accessibleDescription();
+            default:
+                  return QString();
+            }
+      return QString();
+      }
+
+void AccessibleAbstractSlider::valueChanged(double, int)
+      {
+      QAccessibleValueChangeEvent ev(slider, slider->userValue());
+      QAccessible::updateAccessibility(&ev);
+      }
+
+QAccessibleInterface* AccessibleAbstractSlider::AbstractSliderFactory(const QString& /*classname*/, QObject *object)
+      {
+      QAccessibleInterface *iface = 0;
+      if (object && object->isWidgetType() && object->inherits("Awl::AbstractSlider")){
+            AbstractSlider* slider = static_cast<AbstractSlider*>(object);
+            AccessibleAbstractSlider* acc = new AccessibleAbstractSlider(slider);
+            QObject::connect(slider, SIGNAL(valueChanged(double,int)), acc, SLOT(valueChanged(double,int)));
+            iface = static_cast<QAccessibleInterface*>(acc);
+            }
+
+      return iface;
+      }
 }

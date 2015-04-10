@@ -21,38 +21,33 @@
 #ifndef __AWLPITCHLABEL_H__
 #define __AWLPITCHLABEL_H__
 
-#include <QLabel>
+#include <QtWidgets>
 
-namespace Awl
-{
+namespace Awl {
 
 //---------------------------------------------------------
 //   PitchLabel
 //---------------------------------------------------------
 
-  class PitchLabel:public QLabel
-  {
-    bool _pitchMode;
-    int _value;
-  Q_OBJECT protected:
-      QSize sizeHint () const;
+class PitchLabel : public QLabel {
+      bool _pitchMode;
+      int _value;
+      Q_OBJECT
 
-    public slots:void setValue (int);
-    void setInt (int);
-    void setPitch (int);
+   protected:
+      QSize sizeHint() const;
 
-  public:
-      PitchLabel (QWidget * parent = 0);
-    int value () const
-    {
-      return _value;
-    }
-    void setPitchMode (bool val);
-    bool pitchMode () const
-    {
-      return _pitchMode;
-    }
-  };
+   public slots:
+      void setValue(int);
+      void setInt(int);
+      void setPitch(int);
+
+   public:
+      PitchLabel(QWidget* parent = 0);
+      int value() const { return _value; }
+      void setPitchMode(bool val);
+      bool pitchMode() const { return _pitchMode; }
+      };
 }
 
 #endif
