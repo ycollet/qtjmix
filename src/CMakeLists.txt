@@ -3,7 +3,7 @@
 #  Qt Jack Mixer
 #  $Id:$
 #
-#  Copyright (C) 2013 by Yann Collette and others
+#  Copyright (C) 2013-2015 by Yann Collette and others
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License version 2.
@@ -24,13 +24,13 @@ set(QTJMIX_SRCS main.cpp)
 
 set(QTJMIX_UI_SRCS ./mixer_strip.cpp
                    ./gui_mixer.cpp
-		   ./help_dialog.cpp
-		   ./set_mixer_param_dialog.cpp)
+	           ./help_dialog.cpp
+	           ./set_mixer_param_dialog.cpp)
 
 set(QTJMIX_UI_HEADERS ./mixer_strip.h
                       ./gui_mixer.h
-		      ./help_dialog.h
-		      ./set_mixer_param_dialog.h)
+	              ./help_dialog.h
+	              ./set_mixer_param_dialog.h)
 
 set(QTJMIX_TRANS ./translations/qtjmix_en.ts
                  ./translations/qtjmix_fr.ts)

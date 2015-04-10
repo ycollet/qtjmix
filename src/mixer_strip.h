@@ -3,7 +3,7 @@
 //  Qt Jack Mixer
 //  $Id:$
 //
-//  Copyright (C) 2013 by Yann Collette and others
+//  Copyright (C) 2013-2015 by Yann Collette and others
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License version 2.
@@ -21,17 +21,11 @@
 #ifndef MIXER_STRIP_H
 #define MIXER_STRIP_H
 
-#include <QDial>
-#include <QCheckBox>
-#include <QSlider>
-#include <QFrame>
-#include <QString>
-#include <QLabel>
+#include <QtWidgets>
 
 #include "awl/volknob.h"
 #include "awl/panknob.h"
 #include "awl/mslider.h"
-//#include "set_mixer_param_dialog.h"
 
 #include <jack/jack.h>
 

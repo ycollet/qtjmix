@@ -3,7 +3,7 @@
 //  Qt Jack Mixer
 //  $Id:$
 //
-//  Copyright (C) 2013 by Yann Collette and others
+//  Copyright (C) 2013-2015 by Yann Collette and others
 //
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License version 2.
@@ -22,7 +22,6 @@
 #define SET_MIXER_PARAM_DIALOG_H
 
 #include <QWidget>
-#include <QDialog>
 
 #include "mixer_strip.h"
 
