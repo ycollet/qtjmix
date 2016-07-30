@@ -20,7 +20,7 @@
 
 project(QtJMIX C CXX)
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0.0)
 
 option(ENABLE_JACK "Enable jack (for GUI debugging, turn this option to off)" ON)
 option(ENABLE_DEBUG_MESSAGES "Enable debug messages" OFF)
