@@ -94,6 +94,7 @@ class Mixer_Strip : public QFrame
   void            mute_changed(int);
   void            solo_changed(int);
   void            change_parameters();
+  void            recreate_ports();
  protected:
   virtual void    focusInEvent(QFocusEvent * event);
   virtual void    focusOutEvent(QFocusEvent * event);

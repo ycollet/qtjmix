@@ -30,7 +30,6 @@
 
 #include <jack/jack.h>
 #include <jack/types.h>
-#include <jack/session.h>
 
 #include "gui_mixer.h"
 
@@ -97,26 +96,6 @@ int qtjmix_process(jack_nframes_t nframes, void *arg)
   return 0;      
 }
 
-void qtjmix_session_callback(jack_session_event_t *event, void *arg)
-{
-  std::stringstream retval;
-
-  qDebug() << "DEBUG: session notification";
-  qDebug() << "path " << event->session_dir << ", uuid " << event->client_uuid << ", type: " << (event->type == JackSessionSave ? "save" : "quit");
-  
-  // Build the command line
-  retval.str("");
-  retval << "qtjmix " << event->client_uuid;
-  event->command_line = strdup(retval.str().c_str());
-  
-  jack_session_reply(client, event);
-  
-  if (event->type==JackSessionSaveAndQuit)
-    qtjmix_quit = 1;
-  
-  jack_session_event_free(event);
-}
-
 void jack_shutdown(void *arg)
 {
   exit(1);
@@ -130,8 +109,7 @@ int main(int argc, char * argv[])
   jack_status_t status;
 
 #ifdef ENABLE_JACK
-  if (argc==1)        client = jack_client_open(client_name, JackNullOption, &status);
-  else if (argc == 2) client = jack_client_open(client_name, JackSessionID, &status, argv[1]);
+  client = jack_client_open(client_name, JackNullOption, &status);
   
   if (client == NULL) 
     {
@@ -173,7 +151,10 @@ int main(int argc, char * argv[])
   app.setStyle("fusion");
 
   QTranslator qtTranslator;
-  qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::path(QLibraryInfo::TranslationsPath));
+  if (!qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
+    {
+      qWarning() << "Failed to load Qt translations";
+    }
   app.installTranslator(&qtTranslator);
 
   QTranslator myappTranslator;
@@ -205,9 +186,6 @@ int main(int argc, char * argv[])
 #ifdef ENABLE_JACK
   /* Tell the JACK server that we are ready to roll.  Our process() callback will start running now. */
   jack_set_process_callback(client, qtjmix_process, (void *)&mainMixer->get_strip_list());
-
-  /* tell the JACK server to call `session_callback()' if the session is saved. */
-  jack_set_session_callback (client, qtjmix_session_callback, NULL);
 
   /* Start the jack client */
   if (jack_activate(client))

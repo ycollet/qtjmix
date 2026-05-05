@@ -490,40 +490,80 @@ void Mixer_Strip::mouseReleaseEvent(QMouseEvent * event)
     }
 }
 
+void Mixer_Strip::recreate_ports()
+{
+    // unregister anciens ports
+    for (auto& p : input_port)
+        jack_port_unregister(client, p);
+
+    for (auto& p : output_port)
+        jack_port_unregister(client, p);
+
+    if (get_mixer_type() == Mixer_Strip::mono)
+    {
+        input_port[0] = jack_port_register(client,
+            qPrintable(paramDialog->get_mono_in_name()),
+            JACK_DEFAULT_AUDIO_TYPE,
+            JackPortIsInput,
+            0);
+
+        output_port[0] = jack_port_register(client,
+            qPrintable(paramDialog->get_mono_out_name()),
+            JACK_DEFAULT_AUDIO_TYPE,
+            JackPortIsOutput,
+            0);
+    }
+    else
+    {
+        input_port[0] = jack_port_register(client,
+            qPrintable(paramDialog->get_stereo_in_left_name()),
+            JACK_DEFAULT_AUDIO_TYPE,
+            JackPortIsInput,
+            0);
+
+        input_port[1] = jack_port_register(client,
+            qPrintable(paramDialog->get_stereo_in_right_name()),
+            JACK_DEFAULT_AUDIO_TYPE,
+            JackPortIsInput,
+            0);
+
+        output_port[0] = jack_port_register(client,
+            qPrintable(paramDialog->get_stereo_in_left_name()),
+            JACK_DEFAULT_AUDIO_TYPE,
+            JackPortIsOutput,
+            0);
+
+        output_port[1] = jack_port_register(client,
+            qPrintable(paramDialog->get_stereo_in_right_name()),
+            JACK_DEFAULT_AUDIO_TYPE,
+            JackPortIsOutput,
+            0);
+    }
+}
+
 void Mixer_Strip::change_parameters()
 {
-  qDebug() << "DEBUG: in change_parameters";
+    qDebug() << "DEBUG: in change_parameters";
 
-  if ((paramDialog) && (paramDialog->get_value_changed()))
+    if (paramDialog && paramDialog->get_value_changed())
     {
-      qDebug() << "DEBUG: in change_parameters - value changed";
-      
-      this->set_coarse_min(paramDialog->get_coarse_min_value());
-      this->set_coarse_max(paramDialog->get_coarse_max_value());
-      this->set_coarse_current(paramDialog->get_coarse_current_value());
-      
-      this->set_fine_min(paramDialog->get_fine_min_value());
-      this->set_fine_max(paramDialog->get_fine_max_value());
-      this->set_fine_current(paramDialog->get_fine_current_value());
-      
-      this->set_att_rms_level(paramDialog->get_att_rms_value());
-      this->set_att_max_level(paramDialog->get_att_max_value());
-      
-      if (this->get_mixer_type()==Mixer_Strip::mono)
-	{
-	  jack_port_set_name(input_port[0],  qPrintable(paramDialog->get_mono_in_name()));
-	  jack_port_set_name(output_port[0], qPrintable(paramDialog->get_mono_out_name()));
-	}
-      else
-	{
-	  jack_port_set_name(input_port[0],  qPrintable(paramDialog->get_stereo_in_left_name()));
-	  jack_port_set_name(input_port[1],  qPrintable(paramDialog->get_stereo_in_right_name()));
-	  jack_port_set_name(output_port[0], qPrintable(paramDialog->get_stereo_in_left_name()));
-	  jack_port_set_name(output_port[1], qPrintable(paramDialog->get_stereo_in_right_name()));
-	}
+        qDebug() << "DEBUG: in change_parameters - value changed";
 
-      delete paramDialog;
-      paramDialog = NULL;
+        set_coarse_min(paramDialog->get_coarse_min_value());
+        set_coarse_max(paramDialog->get_coarse_max_value());
+        set_coarse_current(paramDialog->get_coarse_current_value());
+
+        set_fine_min(paramDialog->get_fine_min_value());
+        set_fine_max(paramDialog->get_fine_max_value());
+        set_fine_current(paramDialog->get_fine_current_value());
+
+        set_att_rms_level(paramDialog->get_att_rms_value());
+        set_att_max_level(paramDialog->get_att_max_value());
+
+        recreate_ports();
+
+        delete paramDialog;
+        paramDialog = nullptr;
     }
 }
 
