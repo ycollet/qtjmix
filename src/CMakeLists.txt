@@ -23,11 +23,13 @@ set(QTJMIX_SRCS main.cpp)
 set(QTJMIX_UI_SRCS ./mixer_strip.cpp
                    ./gui_mixer.cpp
 	           ./help_dialog.cpp
+	           ./nsm_client.cpp
 	           ./set_mixer_param_dialog.cpp)
 
 set(QTJMIX_UI_HEADERS ./mixer_strip.h
                       ./gui_mixer.h
 	              ./help_dialog.h
+	              ./nsm_client.h
 	              ./set_mixer_param_dialog.h)
 
 set(QTJMIX_TRANS
@@ -42,9 +44,9 @@ add_library(libqtjmix STATIC ${QTJMIX_UI_SRCS} ${QTJMIX_UI_HEADERS_MOC})
 target_link_libraries(libqtjmix Qt6::Widgets Qt6::WebEngineWidgets)
 
 add_executable(qtjmix ${QTJMIX_SRCS} ${QTJMIX_RSRCS})
-target_link_libraries(qtjmix libqtjmix awl Qt6::Widgets Qt6::WebEngineWidgets ${JACK_LIBRARIES})
-target_include_directories(qtjmix PRIVATE ${JACK_INCLUDE_DIRS})
-target_link_directories(qtjmix PRIVATE ${JACK_LIBRARY_DIRS})
+target_link_libraries(qtjmix libqtjmix awl Qt6::Widgets Qt6::WebEngineWidgets ${JACK_LIBRARIES} ${LIBLO_LIBRARIES})
+target_include_directories(qtjmix PRIVATE ${JACK_INCLUDE_DIRS} ${LIBLO_INCLUDE_DIRS})
+target_link_directories(qtjmix PRIVATE ${JACK_LIBRARY_DIRS} ${LIBLO_LIBRARY_DIRS})
 
 qt_add_translations(qtjmix
     TS_FILES ${QTJMIX_TRANS}

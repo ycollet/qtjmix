@@ -35,6 +35,7 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets WebEngineWidgets LinguistTools)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(JACK REQUIRED jack)
+pkg_check_modules(LIBLO REQUIRED liblo)
 
 include_directories("${CMAKE_SOURCE_DIR}/src"
                     "${CMAKE_SOURCE_DIR}/src/widgets"

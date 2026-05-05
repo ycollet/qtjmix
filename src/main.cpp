@@ -32,6 +32,7 @@
 #include <jack/types.h>
 
 #include "gui_mixer.h"
+#include "nsm_client.h"
 
 jack_client_t *client = NULL;
 int qtjmix_quit = 0;
@@ -135,6 +136,14 @@ int main(int argc, char * argv[])
   jack_on_shutdown(client, jack_shutdown, 0);
 #endif
 
+  NSMClient nsm;
+  nsm.init("QtJMix");
+  QTimer *timer = new QTimer(qApp);
+  QObject::connect(timer, &QTimer::timeout, [&nsm]() {
+    nsm.poll();
+  });
+  timer->start(20);
+  
   /* install a signal handler to properly quits jack client */
 #ifdef WIN32
   signal(SIGINT,  signal_handler);
