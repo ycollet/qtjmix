@@ -43,6 +43,8 @@ target_link_libraries(libqtjmix Qt6::Widgets Qt6::WebEngineWidgets)
 
 add_executable(qtjmix ${QTJMIX_SRCS} ${QTJMIX_RSRCS})
 target_link_libraries(qtjmix libqtjmix awl Qt6::Widgets Qt6::WebEngineWidgets ${JACK_LIBRARIES})
+target_include_directories(qtjmix PRIVATE ${JACK_INCLUDE_DIRS})
+target_link_directories(qtjmix PRIVATE ${JACK_LIBRARY_DIRS})
 
 qt_add_translations(qtjmix
     TS_FILES ${QTJMIX_TRANS}

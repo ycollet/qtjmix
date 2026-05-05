@@ -32,7 +32,9 @@ endif (ENABLE_DEBUG_MESSAGES)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets WebEngineWidgets LinguistTools)
-find_package(Jack REQUIRED)
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(JACK REQUIRED jack)
 
 include_directories("${CMAKE_SOURCE_DIR}/src"
                     "${CMAKE_SOURCE_DIR}/src/widgets"
