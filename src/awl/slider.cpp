@@ -173,7 +173,7 @@ void Slider::mouseMoveEvent(QMouseEvent* ev)
       {
       if (!dragMode)
             return;
-      int delta = orient == Qt::Horizontal ? (startDrag.x() - ev->x()) : (startDrag.y() - ev->y());
+      int delta = orient == Qt::Horizontal ? (startDrag.x() - ev->x()) : (startDrag.y() - ev->position().y());
 
 //      if (_invert)
 //            delta = -delta;

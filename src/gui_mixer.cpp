@@ -417,6 +417,7 @@ int Gui_Mixer::about_dialog()
 {
   HelpDialog * helpDialog = new HelpDialog(this);
   helpDialog->show();
+  return 0;
 }
 
 float Gui_Mixer::get_volume(int stripNumber) const
@@ -663,6 +664,7 @@ bool Gui_Mixer::load_config_file(QString fileName)
   for(int i=0; i<load_nbStrips; i++)
     index_mixer_strip = std::max(load_stripID[i],index_mixer_strip);
   index_mixer_strip++;
+  return true;
 }
 
 bool Gui_Mixer::save_config_file(QString fileName) const
@@ -680,7 +682,7 @@ bool Gui_Mixer::save_config_file(QString fileName) const
   // ...
 
   QTextStream out(&file);
-  out << strips.size() << endl;
+  out << strips.size() << Qt::endl;
   for(int i=0; i<strips.size(); i++)
     {
       out << strips[i]->get_mixer_type() << " ";
@@ -688,10 +690,11 @@ bool Gui_Mixer::save_config_file(QString fileName) const
       out << strips[i]->get_strip_id() << " ";
       out << strips[i]->get_coarse_min() << " " << strips[i]->get_coarse_max() << " " << strips[i]->get_coarse_current() << " ";
       out << strips[i]->get_fine_min() << " " << strips[i]->get_fine_max() << " " << strips[i]->get_fine_current() << " ";
-      out << strips[i]->get_mute() << " " << strips[i]->get_solo() << " " << strips[i]->get_pan() << endl;
+      out << strips[i]->get_mute() << " " << strips[i]->get_solo() << " " << strips[i]->get_pan() << Qt::endl;
     }
 
   file.close();
+  return true;
 }
 
 void Gui_Mixer::open_File()

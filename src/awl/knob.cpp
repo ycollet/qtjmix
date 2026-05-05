@@ -106,7 +106,7 @@ void Knob::setBorder(int val)
 
 void Knob::mousePressEvent(QMouseEvent* ev)
       {
-      startY = ev->y();
+      startY = ev->position().y();
       emit sliderPressed(_id);
       if (_center) {
             QRect r(points->boundingRect().toRect());
@@ -132,7 +132,7 @@ void Knob::mouseReleaseEvent(QMouseEvent*)
 
 void Knob::mouseMoveEvent(QMouseEvent* ev)
       {
-      int y       = ev->y();
+      int y       = ev->position().y();
       double delta = (maxValue() - minValue()) / 100.0f;
       if (delta == 0)
             delta = 1;

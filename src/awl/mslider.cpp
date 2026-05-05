@@ -234,7 +234,7 @@ void MeterSlider::paintEvent(QPaintEvent* ev)
    	p.setFont(f);
       p.setPen(QPen(Qt::darkGray, 2));
    	QFontMetrics fm(f);
-      int xt = 20 - fm.width("00") - 5;
+      int xt = 20 - fm.horizontalAdvance("00") - 5;
 
       QString s;
    	for (int i = 10; i < 70; i += 10) {
