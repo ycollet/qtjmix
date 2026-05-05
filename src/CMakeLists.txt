@@ -18,8 +18,6 @@
 #  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #=============================================================================
 
-option(UPDATE_TRANSLATIONS "Update source translation translations/*.ts files (WARNING: make clean will delete the source .ts files! Danger!)" OFF)
-
 set(QTJMIX_SRCS main.cpp)
 
 set(QTJMIX_UI_SRCS ./mixer_strip.cpp
@@ -32,25 +30,9 @@ set(QTJMIX_UI_HEADERS ./mixer_strip.h
 	              ./help_dialog.h
 	              ./set_mixer_param_dialog.h)
 
-set(QTJMIX_TRANS ./translations/qtjmix_en.ts
-                 ./translations/qtjmix_fr.ts)
-
-# Manage translation files
-set(FILES_TO_TRANSLATE)
-file(GLOB FTT_HEADER_FILES *.h widgets/*.h awl/*.h)
-file(GLOB FTT_CPP_FILES *.cpp widgets/*.cpp awl/*.cpp)
-file(GLOB FTT_UI_FILES *.ui widgets/*.ui awl/*.ui)
-set(FILES_TO_TRANSLATE ${FTT_HEADER_FILES} ${FTT_CPP_FILES} ${FTT_UI_FILES})
-
-file (GLOB TRANSLATIONS_FILES translations/*.ts)
-
-if (UPDATE_TRANSLATIONS)
-  qt6_create_translation(QTJMIX_QM ${FILES_TO_TRANSLATE} ${TRANSLATIONS_FILES})
-else (UPDATE_TRANSLATIONS)
-  qt6_add_translation(QTJMIX_QM ${TRANSLATIONS_FILES})
-endif (UPDATE_TRANSLATIONS)
-
-add_custom_target(translations_target DEPENDS ${QTJMIX_QM})
+set(QTJMIX_TRANS
+    translations/qtjmix_en.ts
+    translations/qtjmix_fr.ts)
 
 qt6_wrap_cpp(QTJMIX_UI_HEADERS_MOC ${QTJMIX_UI_HEADERS})
 
@@ -59,11 +41,16 @@ qt6_add_resources(QTJMIX_RSRCS ./qtjmix.qrc)
 add_library(libqtjmix STATIC ${QTJMIX_UI_SRCS} ${QTJMIX_UI_HEADERS_MOC})
 target_link_libraries(libqtjmix Qt6::Widgets Qt6::WebEngineWidgets)
 
-add_executable(qtjmix ${QTJMIX_SRCS} ${QTJMIX_RSRCS} ${QTJMIX_QM})
+add_executable(qtjmix ${QTJMIX_SRCS} ${QTJMIX_RSRCS})
 target_link_libraries(qtjmix libqtjmix awl Qt6::Widgets Qt6::WebEngineWidgets ${JACK_LIBRARIES})
+
+qt_add_translations(qtjmix
+    TS_FILES ${QTJMIX_TRANS}
+    QM_FILES_OUTPUT_VARIABLE QTJMIX_QM
+    LUPDATE_TARGET update_translations)
 
 install(TARGETS qtjmix
         DESTINATION bin)
 
-install(FILES ${QM_FILES} 
+install(FILES ${QTJMIX_QM}
         DESTINATION ${CMAKE_INSTALL_PREFIX}/translations)
