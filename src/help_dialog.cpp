@@ -19,7 +19,7 @@
 //=============================================================================
 
 #include <QtWidgets>
-#include <QtWebKitWidgets>
+#include <QtWebEngineWidgets>
 
 #include "help_dialog.h"
 
@@ -30,7 +30,7 @@ HelpDialog::HelpDialog(QWidget *parent) : QDialog(parent)
   setWindowTitle("QtJMix Help");
   setWindowIcon(QIcon(":/images/MainIcon"));
   
-  QWebView *view = new QWebView(this);
+  QWebEngineView *view = new QWebEngineView(this);
 
   view->setUrl(QUrl("qrc:///docs/main_html_doc"));
   view->show();

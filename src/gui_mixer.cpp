@@ -19,7 +19,6 @@
 //=============================================================================
 
 #include <QtGui>
-#include <QtWebKitWidgets>
 
 #include <sstream>
 #include <iostream>

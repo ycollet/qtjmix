@@ -107,13 +107,13 @@ Mixer_Strip::Mixer_Strip(QWidget * _parent, int _stripNumber, int _nb_channel) :
   connect(panDial, SIGNAL(valueChanged(double, int)), this, SLOT(pan_changed(double, int)));
 
   muteButton = new QCheckBox(this);
-  muteButton->setCheckState(Qt::Unchecked);
+  muteButton->setChecked(false);
   muteButton->setText(tr("Mute"));
   muteButton->setToolTip(tr("Mute the mixer strip"));
   connect(muteButton, SIGNAL(stateChanged(int)), this, SLOT(mute_changed(int)));
 
   soloButton = new QCheckBox(this);
-  soloButton->setCheckState(Qt::Unchecked);
+  soloButton->setChecked(false);
   soloButton->setText(tr("Solo"));
   soloButton->setToolTip(tr("Solo the mixer strip"));
   connect(soloButton, SIGNAL(stateChanged(int)), this, SLOT(solo_changed(int)));

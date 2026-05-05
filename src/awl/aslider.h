@@ -143,8 +143,8 @@ class AbstractSlider : public QWidget {
 class AccessibleAbstractSlider : public QObject, QAccessibleWidget {
       Q_OBJECT
       AbstractSlider* slider;
-      QAccessible::Role role() const Q_DECL_OVERRIDE;
-      QString text(QAccessible::Text t) const Q_DECL_OVERRIDE;
+      QAccessible::Role role() const override;
+      QString text(QAccessible::Text t) const override;
 public:
       static QAccessibleInterface* AbstractSliderFactory(const QString &classname, QObject *object);
       AccessibleAbstractSlider(AbstractSlider*);

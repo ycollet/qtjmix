@@ -45,24 +45,22 @@ set(FILES_TO_TRANSLATE ${FTT_HEADER_FILES} ${FTT_CPP_FILES} ${FTT_UI_FILES})
 file (GLOB TRANSLATIONS_FILES translations/*.ts)
 
 if (UPDATE_TRANSLATIONS)
-  qt5_create_translation(QTJMIX_QM ${FILES_TO_TRANSLATE} ${TRANSLATIONS_FILES})
+  qt6_create_translation(QTJMIX_QM ${FILES_TO_TRANSLATE} ${TRANSLATIONS_FILES})
 else (UPDATE_TRANSLATIONS)
-  qt5_add_translation(QTJMIX_QM ${TRANSLATIONS_FILES})
-endif (UPDATE_TRANSLATIONS) 
+  qt6_add_translation(QTJMIX_QM ${TRANSLATIONS_FILES})
+endif (UPDATE_TRANSLATIONS)
 
 add_custom_target(translations_target DEPENDS ${QTJMIX_QM})
 
-qt5_wrap_cpp(QTJMIX_UI_HEADERS_MOC ${QTJMIX_UI_HEADERS})
+qt6_wrap_cpp(QTJMIX_UI_HEADERS_MOC ${QTJMIX_UI_HEADERS})
 
-qt5_add_resources(QTJMIX_RSRCS ./qtjmix.qrc)
+qt6_add_resources(QTJMIX_RSRCS ./qtjmix.qrc)
 
 add_library(libqtjmix STATIC ${QTJMIX_UI_SRCS} ${QTJMIX_UI_HEADERS_MOC})
+target_link_libraries(libqtjmix Qt6::Widgets Qt6::WebEngineWidgets)
 
 add_executable(qtjmix ${QTJMIX_SRCS} ${QTJMIX_RSRCS} ${QTJMIX_QM})
-target_link_libraries(qtjmix libqtjmix awl ${Qt5Widgets_LIBRARIES} ${Qt5WebKitWidgets_LIBRARIES} ${JACK_LIBRARIES})
-
-qt5_use_modules(libqtjmix Widgets WebKitWidgets)
-qt5_use_modules(qtjmix Widgets WebKitWidgets)
+target_link_libraries(qtjmix libqtjmix awl Qt6::Widgets Qt6::WebEngineWidgets ${JACK_LIBRARIES})
 
 install(TARGETS qtjmix
         DESTINATION bin)

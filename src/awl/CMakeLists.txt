@@ -21,7 +21,7 @@
 
 option(AWL_BUILD_PLUGIN "Build the designer plugin for AWL" OFF)
 
-qt5_wrap_cpp(mocs aslider.h
+qt6_wrap_cpp(mocs aslider.h
                   knob.h
 		  panknob.h
 		  checkbox.h
@@ -58,10 +58,10 @@ add_library(awl STATIC ${mocs}
 		       utils.cpp
 		       denomspinbox.cpp)
 
-qt5_use_modules(awl Widgets)
+target_link_libraries(awl Qt6::Widgets)
 
 if (NOT MINGW AND NOT APPLE AND AWL_BUILD_PLUGIN)
-  qt5_wrap_cpp(mocs2 aslider.h
+  qt6_wrap_cpp(mocs2 aslider.h
                      knob.h
 		     panknob.h
    		     checkbox.h
@@ -96,7 +96,7 @@ if (NOT MINGW AND NOT APPLE AND AWL_BUILD_PLUGIN)
 			     
   set_target_properties(awlplugin PROPERTIES COMPILE_FLAGS "-fPIC -D_GNU_SOURCE -D_REENTRANT -DHAVE_CONFIG_H -DQT_PLUGIN -DQT_SHARED -DQT_NO_DEBUG")
 
-  qt5_use_modules(awlplugin Widgets)
+  target_link_libraries(awlplugin Qt6::Widgets)
  
   install(TARGETS awlplugin 
           DESTINATION ${QT_PLUGINS_DIR}/designer/)
